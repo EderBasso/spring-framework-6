@@ -3,7 +3,6 @@ package br.com.fantasmagorica.spring6webapp.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
