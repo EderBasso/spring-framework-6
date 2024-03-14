@@ -1,6 +1,6 @@
-package br.com.fantasmagorica.spring6webapp.service;
+package br.com.fantasmagorica.spring6webapp.services;
 
-import br.com.fantasmagorica.spring6webapp.model.Customer;
+import br.com.fantasmagorica.spring6webapp.models.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -12,12 +12,12 @@ import java.util.*;
 @Service
 public class CustomerServiceImpl implements CustomerService{
 
-    private Map<UUID, Customer> customerMap;
+    private Map<UUID, CustomerDTO> customerMap;
 
     public CustomerServiceImpl() {
         this.customerMap = new HashMap<>();
 
-        Customer customerA = Customer.builder()
+        CustomerDTO customerA = CustomerDTO.builder()
                 .customerName("Eder")
                 .id(UUID.randomUUID())
                 .version(1)
@@ -25,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService{
                 .updateDate(LocalDateTime.now())
                 .build();
 
-        Customer customerB = Customer.builder()
+        CustomerDTO customerB = CustomerDTO.builder()
                 .customerName("Joao")
                 .id(UUID.randomUUID())
                 .version(1)
@@ -38,12 +38,12 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public List<Customer> listCustomers() {
+    public List<CustomerDTO> listCustomers() {
         return new ArrayList<>(customerMap.values());
     }
 
     @Override
-    public Optional<Customer> getCustomerById(UUID id) {
+    public Optional<CustomerDTO> getCustomerById(UUID id) {
 
         log.debug("Get Customer by Id - in service. Id: " + id.toString());
 
@@ -51,8 +51,8 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public Customer saveNewCustomer(Customer customer) {
-        Customer savedCustomer = Customer.builder()
+    public CustomerDTO saveNewCustomer(CustomerDTO customer) {
+        CustomerDTO savedCustomer = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .createdDate(LocalDateTime.now())
@@ -66,8 +66,8 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public void updateCustomerById(UUID customerId, Customer customer) {
-        Customer existing = customerMap.get(customerId);
+    public void updateCustomerById(UUID customerId, CustomerDTO customer) {
+        CustomerDTO existing = customerMap.get(customerId);
 
         existing.setUpdateDate(LocalDateTime.now());
         existing.setVersion(existing.getVersion() + 1);
@@ -83,8 +83,8 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public void patchCustomerById(UUID customerId, Customer customer) {
-        Customer existing = customerMap.get(customerId);
+    public void patchCustomerById(UUID customerId, CustomerDTO customer) {
+        CustomerDTO existing = customerMap.get(customerId);
 
         if(StringUtils.hasText(customer.getCustomerName())){
             existing.setCustomerName(customer.getCustomerName());
