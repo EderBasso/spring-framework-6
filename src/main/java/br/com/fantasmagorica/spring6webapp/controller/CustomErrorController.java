@@ -1,0 +1,68 @@
+package br.com.fantasmagorica.spring6webapp.controller;
+
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@ControllerAdvice
+public class CustomErrorController {
+
+    /*@ExceptionHandler
+    ResponseEntity handleJPAViolations(TransactionSystemException exception){
+        ResponseEntity.BodyBuilder responseEntity = ResponseEntity.badRequest();
+
+        if(exception.getCause().getCause() instanceof ConstraintViolationException){
+            ConstraintViolationException ve = (ConstraintViolationException) exception.getCause().getCause();
+
+            List errorList = ve.getConstraintViolations().stream()
+                    .map(constraintViolation -> {
+                        Map<String, String > errMap = new HashMap<>();
+                        errMap.put(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
+
+                        return errMap;
+            }).collect(Collectors.toList());
+
+            return responseEntity.body(errorList);
+        }
+
+        return responseEntity.build();
+    }*/
+
+    //Commented out code, to check
+
+    @ExceptionHandler
+    ResponseEntity handleJPAViolations(ConstraintViolationException exception){
+        ResponseEntity.BodyBuilder responseEntity = ResponseEntity.badRequest();
+
+            List errorList = exception.getConstraintViolations().stream()
+                    .map(constraintViolation -> {
+                        Map<String, String > errMap = new HashMap<>();
+                        errMap.put(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
+
+                        return errMap;
+                    }).collect(Collectors.toList());
+
+            return responseEntity.body(errorList);
+
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    ResponseEntity handleBindErrors(MethodArgumentNotValidException exception){
+
+        List errorList = exception.getFieldErrors().stream()
+                .map(fieldError -> {
+                    Map<String, String> errorMap = new HashMap<>();
+                    errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+                    return errorMap;
+                }).collect(Collectors.toList());
+
+        return ResponseEntity.badRequest().body(errorList);
+    }
+}
