@@ -20,7 +20,7 @@ public class Beer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
+    @Column(length = 36, updatable = false, nullable = false)
     private UUID id;
     @Version
     private Integer version;
