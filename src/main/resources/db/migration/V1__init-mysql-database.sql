@@ -10,7 +10,7 @@
         version integer,
         created_date datetime(6),
         update_date datetime(6),
-        id binary(36) not null,
+        id varchar(36) not null,
         beer_name varchar(50) not null,
         upc varchar(255),
         primary key (id)
@@ -20,7 +20,7 @@
         version integer,
         created_date datetime(6),
         update_date datetime(6),
-        id binary(36) not null,
+        id varchar(36) not null,
         customer_name varchar(255),
         primary key (id)
     ) engine=InnoDB;
