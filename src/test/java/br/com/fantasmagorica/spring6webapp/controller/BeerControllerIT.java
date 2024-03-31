@@ -29,6 +29,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,13 +57,21 @@ class BeerControllerIT {
 
     @BeforeEach
     void setUp(){
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
+    @Test
+    void testNoAuth() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH))
+                .andExpect(status().isUnauthorized());
+    }
 
     @Test
     void testListBeerByStyleAndNameShowInventoryTruePage2() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(httpBasic("user1", "password"))
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("beerName", "IPA")
                         .queryParam("showInventory", "TRUE")
@@ -75,6 +85,7 @@ class BeerControllerIT {
     @Test
     void testListBeerByStyleAndNameShowInventoryTrue() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(httpBasic("user1", "password"))
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("beerName", "IPA")
                         .queryParam("showInventory", "TRUE")
@@ -86,6 +97,7 @@ class BeerControllerIT {
     @Test
     void testListBeerByStyleAndNameShowInventoryFalse() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(httpBasic("user1", "password"))
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("beerName", "IPA")
                         .queryParam("showInventory", "FALSE")
@@ -98,6 +110,7 @@ class BeerControllerIT {
     @Test
     void testListBeerByStyleAndName() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(httpBasic("user1", "password"))
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("beerName", "IPA")
                         .queryParam("pageSize", "800"))
@@ -108,6 +121,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByStyle() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(httpBasic("user1", "password"))
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
@@ -117,6 +131,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByName() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(httpBasic("user1", "password"))
                         .queryParam("beerName", "IPA")
                         .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
@@ -131,6 +146,7 @@ class BeerControllerIT {
         beerMap.put("beerName", "Testing Beer Too Long Name Testing Beer Too Long Name");
 
         MvcResult mvcResult = mockMvc.perform(patch(BeerController.BEER_PATH + beer.getId())
+                        .with(httpBasic("user1", "password"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
