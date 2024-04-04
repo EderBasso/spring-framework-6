@@ -6,8 +6,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-
 @Configuration
 public class SpringSecurityConfig {
 
@@ -16,9 +14,12 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .csrf((csrf) ->
-                        csrf.ignoringRequestMatchers(antMatcher("/api/**")));
+                //.httpBasic(Customizer.withDefaults())
+                .oauth2ResourceServer((oauth2ResourceServer) ->
+                        oauth2ResourceServer
+                                .jwt(Customizer.withDefaults())
+                );
         return http.build();
     }
+
 }
